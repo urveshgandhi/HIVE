@@ -19,9 +19,9 @@ In Apache Hive, there are several types of tables that can be created:
 
 --> Virtual Tables: These tables are created using Hive's Virtual View feature. They do not actually contain any data themselves but provide a virtual view of data stored in other tables.
 
-============================================================================================================================                                           
+=======================================================                                          
    HQL
-============================================================================================================================						
+=======================================================						
 --> Structured, semi- strutured
 --> Data warehouse on HDFS
 --> ELT purpose (Extract Load Transform)
@@ -29,9 +29,9 @@ In Apache Hive, there are several types of tables that can be created:
 --> Schema on read
 --> good for large data
 --> good for large data (not good for small data)
-=============================================================================================================================
+========================================================
    SQL
-=============================================================================================================================
+========================================================
 --> Handle onky strutured data	
 --> Structured Query Language 
 --> Database (Not good for large data)	
