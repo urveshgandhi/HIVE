@@ -19,17 +19,23 @@ In Apache Hive, there are several types of tables that can be created:
 
 --> Virtual Tables: These tables are created using Hive's Virtual View feature. They do not actually contain any data themselves but provide a virtual view of data stored in other tables.
 
-
-
-============================================================================================================================
-                 SQL                                              =	   HQL
-============================================================================================================================
-																  
---> Handle onky strutured data					  = --> Structured, semi- strutured
---> Structured Query Language 					  = --> Data warehouse on HDFS
---> Database (Not good for large data)				  = --> ELT purpose (Extract Load Transform)
---> ETL purpose (Extract Transform Load)                          = --> Query time parsing
---> Good for small data 					  = --> Schema on read
---> Load time parsing 						  = --> good for large data
---> Schema on write						  = --> good for large data (not good for small data)
+============================================================================================================================                                           
+   HQL
+============================================================================================================================						
+--> Structured, semi- strutured
+--> Data warehouse on HDFS
+--> ELT purpose (Extract Load Transform)
+--> Query time parsing
+--> Schema on read
+--> good for large data
+--> good for large data (not good for small data)
 =============================================================================================================================
+   SQL
+=============================================================================================================================
+--> Handle onky strutured data	
+--> Structured Query Language 
+--> Database (Not good for large data)	
+--> ETL purpose (Extract Transform Load) 
+--> Good for small data 
+--> Load time parsing
+--> Schema on write
