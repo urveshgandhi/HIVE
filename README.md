@@ -21,15 +21,15 @@ In Apache Hive, there are several types of tables that can be created:
 
 
 
-==========================================================================================================================================
-                 SQL                                              =								HQL
-==========================================================================================================================================
-																  =
---> Handle onky strutured data									  = --> Structured, semi- strutured
---> Structured Query Language 									  = --> Data warehouse on HDFS
---> Database (Not good for large data)							  = --> ELT purpose (Extract Load Transform)
+============================================================================================================================
+                 SQL                                              =	   HQL
+============================================================================================================================
+																  
+--> Handle onky strutured data					  = --> Structured, semi- strutured
+--> Structured Query Language 					  = --> Data warehouse on HDFS
+--> Database (Not good for large data)				  = --> ELT purpose (Extract Load Transform)
 --> ETL purpose (Extract Transform Load)                          = --> Query time parsing
---> Good for small data 										  = --> Schema on read
---> Load time parsing 											  = --> good for large data
---> Schema on write												  = --> good for large data (not good for small data)
-===========================================================================================================================================
+--> Good for small data 					  = --> Schema on read
+--> Load time parsing 						  = --> good for large data
+--> Schema on write						  = --> good for large data (not good for small data)
+=============================================================================================================================
