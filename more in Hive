@@ -1,0 +1,170 @@
+============
+Data Ready
+============
+
+cd
+
+echo 1,Sai,I,IND>allcountry.csv
+echo 2,zeyo,I,IND>>allcountry.csv
+echo 3,Hema,K,UK>>allcountry.csv
+echo 4,Gomathi,K,UK>>allcountry.csv
+echo 5,Jai,S,US>>allcountry.csv
+echo 6,Swathi,S,US>>allcountry.csv
+
+============
+hive -- Go inside hive
+============
+create database if not exists pdb;
+use pdb;
+
+
+============
+Static Table creation
+============
+
+drop table sitab;
+create table sitab(id int,name string,chk string) partitioned by (country string) row format delimited fields terminated by ',' location '/user/cloudera/sidir';
+drop table srctab;
+
+============
+Source table creation
+============
+
+create table srctab(id int,name string,chk string,country string) row format delimited fields terminated by ',' location '/user/cloudera/sdir';
+
+
+============
+Load allcountry data to srctab
+============
+
+
+load data local inpath '/home/cloudera/allcountry.csv' into table srctab;
+
+
+============
+static insert for USA Partitions
+============
+
+insert into sitab partition(country='USA') select id,name,chk from srctab where country='US';
+
+!hadoop fs -ls /user/cloudera/sidir;         ---> u will see country=USA
+
+============
+Dynamic Table creation
+============
+
+drop table dyntab;
+create table dyntab(id int,name string,chk string) partitioned by (country string) row format delimited fields terminated by ',' location '/user/cloudera/dyndir';
+
+
+============
+Dynamic Insert
+============
+
+set hive.exec.dynamic.partition.mode=nonstrict;
+insert into dyntab partition(country) select id,name,chk,country from srctab;
+
+!hadoop fs -ls /user/cloudera/dyndir;  
+
+=============================
+Task  1 --- Sub partitions
+=============================
+
+==================
+Sub partitions-- Cloudera Folks
+==================
+
+Task 1 -----
+
+
+cd
+
+echo 1,Sai,I,IND,cash>allc.csv
+echo 2,zeyo,I,IND,credit>>allc.csv
+echo 3,Hema,K,UK,cash>>allc.csv
+echo 4,Gomathi,K,UK,credit>>allc.csv
+echo 5,Jai,S,US,cash>>allc.csv
+echo 6,Swathi,S,US,credit>>allc.csv
+echo 7,Sai,I,IND,credit>>allc.csv
+echo 8,zeyo,I,IND,cash>>allc.csv
+echo 9,Hema,K,UK,credit>>allc.csv
+echo 10,Gomathi,K,UK,cash>>allc.csv
+echo 11,Jai,S,US,credit>>allc.csv
+echo 12,Swathi,S,US,cash>>allc.csv
+
+hive 
+
+create table srcs(id int,name string,chk string,country string,spendby string) row format delimited fields terminated by ',' location '/user/cloudera/srcd';
+
+load data local inpath '/home/cloudera/allc.csv' into table srcs;
+
+
+create table tars(id int,name string,chk string) partitioned by (country string,spendby string) row format delimited fields terminated by ',' location '/user/cloudera/tard';
+
+set hive.exec.dynamic.partition.mode=nonstrict;
+
+insert into tars partition (country,spendby) select id,name,chk,country,spendby from srcs;
+
+!hadoop fs -ls /user/cloudera/tard;
+
+
+=============================================
+(01/28/2023)
+=============================================
+
+Cloudera avro
+
+========
+mysql -uroot -pcloudera
+
+create database dataa;
+use dataa;
+
+drop table atab;
+create table atab(id int,name varchar(100),amount int);
+insert into atab values(1,'rajesh',40);
+insert into atab values(2,'vishnu',10);
+insert into atab values(3,'rani',60);
+select * from atab;
+
+quit;
+========
+Edge Node
+
+
+sqoop import --connect jdbc:mysql://localhost/dataa --username root --password cloudera --table atab --m 1  --delete-target-dir --target-dir /user/cloudera/adir --as-avrodatafile
+
+
+
+========
+hive
+
+create database if not exists adb;
+use adb;
+drop table atab;
+create table avrotab(id int,name string,amount int) stored as avro location '/user/cloudera/adir';
+select * from atab; select * from avrotab;
+
+
+====================
+mysql -uroot -pcloudera
+use dataa;
+alter table atab drop column name;
+insert into atab values(4,90);
+insert into atab values(5,20);
+select * from atab;
+
+quit
+
+
+========
+Edge Node
+
+sqoop import --connect jdbc:mysql://localhost/dataa --username root --password cloudera --table atab --m 1 --target-dir /user/cloudera/adir --as-avrodatafile --incremental append --check-column id --last-value 3
+
+========
+hive
+
+select * from adb.atab;
+select * from adb.avrotab;
+
